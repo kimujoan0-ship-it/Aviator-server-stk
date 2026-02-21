@@ -122,7 +122,6 @@ app.post("/callback", async (req, res) => {
 
     writeReceipts(receipts);
 
-    // ✅ SAFE BALANCE UPDATE CALL TO DATABASE SERVER
     try {
       await axios.post("https://aviator-server-irsg.onrender.com/update-balance", {
         phone: receipts[ref].phone,
@@ -144,6 +143,53 @@ app.post("/callback", async (req, res) => {
   }
 
   res.json({ ResultCode: 0, ResultDesc: "Callback received" });
+});
+
+// 3️⃣ Receipt Fetch Endpoint
+app.get("/receipt/:reference", (req, res) => {
+  const { reference } = req.params;
+  const receipts = readReceipts();
+  const receipt = receipts[reference];
+
+  if (!receipt) {
+    return res.status(404).json({
+      success: false,
+      error: "Receipt not found"
+    });
+  }
+
+  res.json({
+    success: true,
+    receipt
+  });
+});
+
+// 4️⃣ Receipt PDF Download
+app.get("/receipt/:reference/pdf", (req, res) => {
+  const { reference } = req.params;
+  const receipts = readReceipts();
+  const receipt = receipts[reference];
+
+  if (!receipt) {
+    return res.status(404).json({ error: "Receipt not found" });
+  }
+
+  const doc = new PDFDocument();
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `attachment; filename=${reference}.pdf`);
+
+  doc.pipe(res);
+
+  doc.fontSize(18).text("Payment Receipt", { align: "center" });
+  doc.moveDown();
+  doc.text(`Reference: ${receipt.reference}`);
+  doc.text(`Phone: ${receipt.phone}`);
+  doc.text(`Amount: KES ${receipt.amount}`);
+  doc.text(`Status: ${receipt.status}`);
+  doc.text(`Transaction Code: ${receipt.transaction_code || "N/A"}`);
+  doc.text(`Date: ${receipt.timestamp}`);
+
+  doc.end();
 });
 
 app.listen(PORT, () => {
