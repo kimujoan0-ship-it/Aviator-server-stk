@@ -61,7 +61,7 @@ app.post("/pay", async (req, res) => {
       payload,
       {
         headers: {
-          Authorization: `Bearer YOUR_SWIFTWALLET_KEY`,
+          Authorization: `Bearer sw_0e9f0fd22b99a30391b2721f3336fb3ed27a2055629645f11c481603`,
           "Content-Type": "application/json"
         }
       }
