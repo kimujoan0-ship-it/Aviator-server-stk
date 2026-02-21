@@ -66,7 +66,7 @@ app.post("/pay", async (req, res) => {
     const url = "https://swiftwallet.co.ke/v3/stk-initiate/";
     const resp = await axios.post(url, payload, {
       headers: {
-        Authorization: `Bearer sw_a643266eb696a3a58136f6eb353cbfaed63ea0660f8c70cd8458cd55`,
+        Authorization: `Bearer sw_0e9f0fd22b99a30391b2721f3336fb3ed27a2055629645f11c481603`,
         "Content-Type": "application/json"
       }
     });
